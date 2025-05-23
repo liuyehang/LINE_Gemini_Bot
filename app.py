@@ -117,10 +117,17 @@ def get_history():
 
 
 # ====== REST API：清空历史记录 ======
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
+
 @app.route("/history", methods=["DELETE"])
 def delete_history():
-    open("history.json", "w", encoding="utf-8").write("[]")
-    return jsonify({"message": "历史记录已清除"})
+    try:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            f.write("[]")
+        return jsonify({"message": "历史记录已清除"})
+    except Exception as e:
+        return jsonify({"error": f"删除失败: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
